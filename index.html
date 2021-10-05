@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>VUE TODO list</title>
+        <link rel="icon" href="http://witrac.es/industrial/wp-content/uploads/2020/08/favicon-witrac.gif" sizes="32x32">
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+        <script src="https://code.iconify.design/2/2.0.3/iconify.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+        
+    </head>
+
+    <div id="app">
+        <v-app>
+            <v-main>
+                <v-container>
+                    <v-row justify="center" class="ma-5">
+                        <v-col xs="12" sm="8">
+                            <v-card>
+
+                                <v-toolbar color="blue darken-4" dark>
+                                    <v-app-bar-nav-icon></v-app-bar-nav-icon>
+                                    <v-toolbar-title class="headline">Todo List</v-toolbar-title>
+                                    <v-spacer></v-spacer>                                    
+                                </v-toolbar>
+
+                                <v-list two-line subheader>
+                                    <v-subheader class="headline">{{date}}</v-subheader>
+                                    <p class="mx-12 text-right"><b>{{todos.length}}</b> Tasks</p>
+
+                                    <v-list-item>
+                                        <v-list-item-content>
+                                            <v-list-item-title>
+                                                <v-text-field v-model="newTodo" id="newTodo" name="newTodo"
+                                                    label="Type your task" @keyup.enter="addTodo" />
+                                            </v-list-item-title>
+                                        </v-list-item-content>
+                                    </v-list-item>
+
+                                </v-list>
+
+                                <v-list subheader two-line flat>
+                                    <v-subheader class="subheading" v-if="todos.length == 0">You have 0 Tasks, add some
+                                    </v-subheader>
+                                    <v-subheader class="subheading" v-else="todos.length == 1">Your Tasks</v-subheader>
+
+                                    <v-list-item-group>
+                                        <v-list-item v-for="(todo, i) in todos">
+                                            <template #default="{ active, toggle }">
+                                                <v-list-item-action>
+                                                    <v-checkbox v-model="active" @click="toggle"></v-checkbox>
+                                                </v-list-item-action>
+
+                                                <v-list-item-content>
+                                                    <v-list-item-title :class="{
+                    done: active
+                    }">{{ todo.title | capitalize }}</v-list-item-title>
+                                                    <v-list-item-subtitle>Added: {{ date }} </v-list-item-subtitle>
+                                                    <v-list-item-subtitle v-if="todo.check"> Checked! </v-list-item-subtitle>
+                                                </v-list-item-content>
+                                                <v-btn fab ripple small color="green" v-if="active" 
+                                                    @click="checkTodo(i)">
+                                                    <v-icon class="white--text">mdi-close</v-icon>
+                                                </v-btn>
+                                                <v-btn fab ripple small color="red" v-if="active"
+                                                    @click="removeTodo(i)">
+                                                    <v-icon class="white--text">mdi-close</v-icon>
+                                                </v-btn>
+                                            </template>
+                                        </v-list-item>
+                                    </v-list-item-group>
+                                </v-list>
+                            </v-card>
+                        </v-col>
+                    </v-row>
+                </v-container>
+            </v-main>
+        </v-app>
+    </div>
+
+
+    <script>
+
+        new Vue({
+                el: "#app",
+                vuetify: new Vuetify(),
+                data() {
+                    return {
+                        show: true,
+                        newTodo: "",
+                        todos: [],
+                        date: moment()
+                    }
+                },
+                filters: {
+                    capitalize: function (value) {
+                        if (!value) return "";
+                        value = value.toString();
+                        return value.charAt(0).toUpperCase() + value.slice(1);
+                    }
+                },
+                methods: {
+                    addTodo() {
+                        const value = this.newTodo && this.newTodo.trim();
+                        if (!value) {
+                            return;
+                        }
+
+                        this.todos.push({
+                            title: this.newTodo,
+                            done: false
+                        });
+                        this.newTodo = "";
+                    },
+
+                    removeTodo(index) {
+                        this.todos.splice(index, 1);
+                    }, 
+
+                    checkTodo(index) {
+                        console.log(this.todos[index]);
+                        this.todos[index].check = true;
+                    },           
+                }
+            });
+
+
+    </script>
